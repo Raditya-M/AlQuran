@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
 
   headerTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
     color: C.text,
   },
@@ -131,14 +131,14 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginTop: 10,
     marginBottom: 20,
+    gap: 16,
   },
 
   gridItem: {
-    width: '23%',
+    width: 75,
     alignItems: 'center',
     marginBottom: 20,
   },

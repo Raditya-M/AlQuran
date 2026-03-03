@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Share } from "react-native";
+import { Linking } from "react-native";
+import { Modal, Pressable } from "react-native";
 import {
   View,
   Text,
@@ -10,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 const C = {
   primary:   "#0F3D3E",
@@ -20,6 +24,29 @@ const C = {
   text:      "#1a2e2e",
   muted:     "#6B8B8B",
   border:    "rgba(15,61,62,0.08)",
+};
+
+const handleShare = async () => {
+  try {
+    await Share.share({
+      message:
+        "Bro cobain aplikasi ini deh 🔥 Keren banget!\n\nDownload di sini: https://play.google.com/store/apps/details?id=com.AlQuran",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const handleFeedback = () => {
+  const email = "ditesibot666@gmail.com";
+  const subject = "Feedback Aplikasi";
+  const body = "Halo, saya ingin memberikan saran untuk aplikasi ini:\n\n";
+
+  const url = `mailto:${email}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;
+
+  Linking.openURL(url);
 };
 
 function SectionLabel({ title }: { title: string }) {
@@ -68,6 +95,10 @@ function SettingRow({ icon, iconBg, title, subtitle, onPress, right, isFirst, is
 export default function PengaturanScreen() {
   const [darkMode, setDarkMode] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(true);
+  const [fontSize, setFontSize] = useState("Sedang");
+  const [fontModal, setFontModal] = useState(false);
+  const [privacyModal, setPrivacyModal] = useState(false);
+  const [termsModal, setTermsModal] = useState(false);
 
   return (
     <SafeAreaView style={styles.safe} edges={["top"]}>
@@ -147,7 +178,8 @@ export default function PengaturanScreen() {
             iconBg="#fdf3dc"
             icon={<Feather name="type" size={17} color="#c9972a" />}
             title="Ukuran Font Arab"
-            subtitle="Sedang"
+            subtitle={fontSize}
+            onPress={() => setFontModal(true)}
           />
         </View>
 
@@ -160,6 +192,7 @@ export default function PengaturanScreen() {
             icon={<Feather name="heart" size={17} color="#3a5aad" />}
             title="Dukung Developer"
             subtitle="Kontribusi untuk biaya maintenance & fitur baru"
+            onPress={() => router.push('/donasi')}
           />
           <SettingRow
             iconBg="#fdf3dc"
@@ -172,6 +205,7 @@ export default function PengaturanScreen() {
             icon={<Feather name="share-2" size={17} color={C.secondary} />}
             title="Bagikan Aplikasi"
             subtitle="Ajak teman menggunakan aplikasi ini"
+            onPress={handleShare}
           />
           <SettingRow
             isLast
@@ -179,6 +213,7 @@ export default function PengaturanScreen() {
             icon={<Feather name="mail" size={17} color="#c0392b" />}
             title="Kirim Feedback"
             subtitle="Sampaikan saran dan masukan"
+            onPress={handleFeedback}
           />
         </View>
 
@@ -190,11 +225,13 @@ export default function PengaturanScreen() {
             iconBg="#eaf0e6"
             icon={<Feather name="shield" size={17} color="#4a7c40" />}
             title="Kebijakan Privasi"
+            onPress={() => setPrivacyModal(true)}
           />
           <SettingRow
             iconBg="#e0f0ef"
             icon={<Feather name="file-text" size={17} color="#1a7a78" />}
             title="Syarat & Ketentuan"
+            onPress={() => setTermsModal(true)}
           />
           <SettingRow
             isLast
@@ -218,6 +255,100 @@ export default function PengaturanScreen() {
         </View>
 
       </ScrollView>
+
+            <Modal
+  transparent
+  visible={fontModal}
+  animationType="fade"
+  onRequestClose={() => setFontModal(false)}
+>
+  <Pressable
+    style={styles.modalOverlay}
+    onPress={() => setFontModal(false)}
+  >
+    <View style={styles.modalBox}>
+      {["Kecil", "Sedang", "Besar"].map((size) => (
+        <TouchableOpacity
+          key={size}
+          style={styles.modalItem}
+          onPress={() => {
+            setFontSize(size);
+            setFontModal(false);
+          }}
+        >
+          <Text style={styles.modalText}>{size}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  </Pressable>
+</Modal>
+
+<Modal
+  transparent
+  visible={privacyModal}
+  animationType="fade"
+  onRequestClose={() => setPrivacyModal(false)}
+>
+  <View style={styles.modalOverlay}>
+    <View style={[styles.modalBox, { width: "85%", maxHeight: "70%" }]}>
+      
+      <Text style={styles.modalTitle}>Kebijakan Privasi</Text>
+
+      <ScrollView style={{ paddingHorizontal: 16 }}>
+        <Text style={styles.modalContent}>
+Aplikasi ini tidak mengumpulkan data pribadi tanpa izin pengguna.
+Data seperti bookmark dan progress hanya disimpan secara lokal di perangkat.
+
+Kami tidak membagikan data kepada pihak ketiga.
+Dengan menggunakan aplikasi ini, Anda menyetujui kebijakan ini.
+        </Text>
+      </ScrollView>
+
+      <TouchableOpacity
+        style={styles.modalCloseBtn}
+        onPress={() => setPrivacyModal(false)}
+      >
+        <Text style={styles.modalCloseText}>Tutup</Text>
+      </TouchableOpacity>
+
+    </View>
+  </View>
+</Modal>
+
+<Modal
+  transparent
+  visible={termsModal}
+  animationType="fade"
+  onRequestClose={() => setTermsModal(false)}
+>
+  <View style={styles.modalOverlay}>
+    <View style={[styles.modalBox, { width: "85%", maxHeight: "70%" }]}>
+      
+      <Text style={styles.modalTitle}>Syarat & Ketentuan</Text>
+
+      <ScrollView style={{ paddingHorizontal: 16 }}>
+        <Text style={styles.modalContent}>
+Dengan menggunakan aplikasi ini, Anda setuju untuk:
+
+1. Menggunakan aplikasi secara bijak dan sesuai hukum.
+2. Tidak menyalahgunakan fitur yang tersedia.
+3. Tidak melakukan modifikasi atau distribusi ulang tanpa izin.
+
+Developer berhak memperbarui fitur dan kebijakan kapan saja untuk peningkatan layanan.
+        </Text>
+      </ScrollView>
+
+      <TouchableOpacity
+        style={styles.modalCloseBtn}
+        onPress={() => setTermsModal(false)}
+      >
+        <Text style={styles.modalCloseText}>Tutup</Text>
+      </TouchableOpacity>
+
+    </View>
+  </View>
+</Modal>
+
     </SafeAreaView>
   );
 }
@@ -363,7 +494,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 20,
   },
-  versiPillText: { fontSize: 11, color: C.secondary, fontWeight: "700" },
+  versiPillText: { fontSize: 10, color: C.secondary, fontWeight: "700" },
 
   // Footer
   footer: {
@@ -374,4 +505,52 @@ const styles = StyleSheet.create({
   },
   footerText: { fontSize: 12, color: C.muted, fontWeight: "500" },
   footerVer: { fontSize: 11, color: "#b0c4c4", fontWeight: "500" },
+
+  modalOverlay: {
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.4)",
+  justifyContent: "center",
+  alignItems: "center",
+},
+modalBox: {
+  width: 220,
+  backgroundColor: "white",
+  borderRadius: 14,
+  paddingVertical: 8,
+},
+modalItem: {
+  paddingVertical: 14,
+  alignItems: "center",
+},
+modalText: {
+  fontSize: 14,
+  fontWeight: "600",
+},
+
+modalTitle: {
+  fontSize: 16,
+  fontWeight: "700",
+  padding: 16,
+  textAlign: "center",
+},
+
+modalContent: {
+  fontSize: 13,
+  color: "#444",
+  lineHeight: 20,
+  marginBottom: 16,
+},
+
+modalCloseBtn: {
+  backgroundColor: C.secondary,
+  margin: 16,
+  paddingVertical: 10,
+  borderRadius: 8,
+  alignItems: "center",
+},
+
+modalCloseText: {
+  color: "white",
+  fontWeight: "700",
+},
 });
