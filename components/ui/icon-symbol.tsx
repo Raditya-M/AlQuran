@@ -18,6 +18,20 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+
+  // Quran
+  'book.fill': 'menu-book',
+  'book.pages.fill': 'menu-book',
+
+  // Artikel
+  'doc.text.fill': 'article',
+
+  // Pengaturan
+  'gearshape.fill': 'settings',
+
+  // AI
+  'sparkles': 'auto-awesome',
+
 } as IconMapping;
 
 /**
